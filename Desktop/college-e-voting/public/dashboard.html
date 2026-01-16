@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard - College E-Voting</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #5a5a5a;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  z-index: -2;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+  50% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  z-index: -1;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+}
+
+.header > div {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+#votingStatusDisplay {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  padding: 10px 18px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#votingToggleBtn,
+#logoutBtn {
+  padding: 12px 28px;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#votingToggleBtn:hover,
+#logoutBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Form Columns */
+.columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 28px;
+  margin-bottom: 40px;
+}
+
+.column {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.column:hover {
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.column h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Forms */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 13px 16px;
+  border: 1.5px solid #e0d5c7;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  background: #fdfcfb;
+  transition: all 0.3s ease;
+  color: #5a5a5a;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+form button {
+  padding: 13px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+/* Results Section */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+#candidateList h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 18px;
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 2px solid rgba(102, 126, 234, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#candidateList h4:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Candidate List Items */
+#candidateList > div > h4 {
+  font-size: 15px;
+  color: #b8a89f;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+#candidateList div > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #faf8f5;
+  margin-bottom: 8px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.2s ease;
+}
+
+#candidateList div > div:hover {
+  background: #f5f2eb;
+  border-color: #667eea;
+}
+
+#candidateList button {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px !important;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
+}
+
+#candidateList button:hover {
+  transform: scale(1.05);
+}
+
+/* Chart Section */
+#resultsChart {
+  margin: 24px 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* Winner Section */
+#winnerSection {
+  margin: 30px 0;
+  animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Table */
+#suspiciousTable {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+#suspiciousTable thead {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+#suspiciousTable th,
+#suspiciousTable td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+  font-size: 14px;
+  color: #5a5a5a;
+}
+
+#suspiciousTable th {
+  font-weight: 700;
+  color: #667eea;
+}
+
+#suspiciousTable tbody tr:hover {
+  background: rgba(102, 126, 234, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .header > div {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .columns {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>✓ Election Dashboard</h1>
+    <div style="display: flex; gap: 16px; align-items: center;">
+      <div id="votingStatusDisplay" style="font-weight: 600; font-size: 14px;">Loading...</div>
+      <button id="votingToggleBtn">Start Voting</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <div class="columns">
+    <div class="column">
+      <h3>👤 Add Student</h3>
+      <form id="addStudentForm">
+        <input id="studentAdmissionNo" placeholder="Admission Number" required>
+        <input id="studentEmail" placeholder="Student Email" required>
+        <button type="submit">Add Student</button>
+      </form>
+    </div>
+
+    <div class="column">
+      <h3>🎯 Add Candidate</h3>
+      <form id="addCandidateForm">
+        <input id="candidateId" placeholder="Candidate ID" required>
+        <input id="candidateName" placeholder="Candidate Name" required>
+        <input id="candidateEmail" placeholder="Email Address" required>
+        <input id="candidatePosition" placeholder="Position" required>
+        <button type="submit">Add Candidate</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="column full-width">
+    <h3>📋 Candidates by Position</h3>
+    <div id="candidateList"></div>
+  </div>
+
+  <div class="column full-width">
+    <h3>📊 Live Election Results</h3>
+    <canvas id="resultsChart"></canvas>
+
+    <div id="winnerSection" style="display: none;"></div>
+
+    <h4>⚠️ Suspicious Attempts</h4>
+    <table id="suspiciousTable">
+      <thead>
+        <tr>
+          <th>Admission No</th>
+          <th>Reason</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script type="module" src="./js/admin-dashboard.js"></script>
+</body>
+</html>

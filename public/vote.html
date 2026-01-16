@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vote - College E-Voting</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #333;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  z-index: -2;
+  animation: gradientShift 8s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+  50% { background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%); }
+}
+
+/* Header */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  padding: 24px 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.student-info {
+  text-align: right;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.student-name {
+  display: block;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* Main */
+.main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.page-title {
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.position-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  animation: slideIn 0.6s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.position-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #667eea;
+  margin-bottom: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.candidate {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.candidate:hover {
+  background: rgba(102, 126, 234, 0.12);
+  border-color: #667eea;
+}
+
+.candidate input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 14px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.candidate-info {
+  flex: 1;
+}
+
+.candidate-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.candidate-details {
+  font-size: 13px;
+  color: #999;
+}
+
+/* Message */
+#statusMsg {
+  text-align: center;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.success {
+  background: rgba(76, 175, 80, 0.1);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 15px;
+  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+#logoutBtn {
+  display: none;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+  box-shadow: 0 10px 25px rgba(102, 102, 102, 0.3);
+}
+
+#logoutBtn:hover {
+  box-shadow: 0 15px 35px rgba(102, 102, 102, 0.4);
+}
+
+@media (max-width: 600px) {
+  .main {
+    margin: 20px auto;
+    padding: 0 15px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .position-card {
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .student-info {
+    text-align: center;
+  }
+
+  .student-name {
+    margin-bottom: 2px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="header">
+  <div class="logo">🗳️ College Elections</div>
+  <div class="student-info">
+    <span class="student-name" id="studentName">Welcome</span>
+    <span id="studentAdm"></span>
+  </div>
+</div>
+
+<div class="main">
+  <h1 class="page-title">Cast Your Vote</h1>
+  
+  <div id="statusMsg"></div>
+
+  <div id="positions"></div>
+
+  <button id="submitVote">Submit Vote</button>
+  <button id="logoutBtn">Logout</button>
+</div>
+
+<!-- Barcode Scanner Library -->
+<script src="https://unpkg.com/@zxing/library@0.20.0/umd/index.min.js"></script>
+
+<!-- Vote Script -->
+<script type="module">
+import { db } from "./js/firebase-config.js";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const student = JSON.parse(localStorage.getItem("currentStudent"));
+if (!student) {
+  alert("Please login first");
+  window.location.href = "student.html";
+}
+
+document.getElementById("studentName").textContent = student.name;
+document.getElementById("studentAdm").textContent = `Admission: ${student.admissionNo}`;
+
+const positionsDiv = document.getElementById("positions");
+let candidateData = {};
+
+async function loadCandidates() {
+  const snap = await getDocs(collection(db, "candidates"));
+  candidateData = {};
+
+  snap.forEach(docSnap => {
+    const c = docSnap.data();
+    if (!candidateData[c.position]) candidateData[c.position] = [];
+    candidateData[c.position].push({ id: docSnap.id, ...c });
+  });
+
+  for (const position in candidateData) {
+    const card = document.createElement("div");
+    card.className = "position-card";
+    card.innerHTML = `<div class="position-title">${position}</div>`;
+
+    candidateData[position].forEach(c => {
+      const label = document.createElement("label");
+      label.className = "candidate";
+      label.innerHTML = `
+        <input type="radio" name="${position}" value="${c.id}">
+        <div class="candidate-info">
+          <div class="candidate-name">${c.name}</div>
+          <div class="candidate-details">${c.email || ''}</div>
+        </div>
+      `;
+      card.appendChild(label);
+    });
+
+    positionsDiv.appendChild(card);
+  }
+}
+
+loadCandidates();
+
+/* ========== SUBMIT VOTE ========== */
+document.getElementById("submitVote").onclick = async () => {
+  const status = document.getElementById("statusMsg");
+  status.textContent = "";
+  status.className = "";
+
+  const studentRef = doc(db, "students", student.admissionNo);
+  const snap = await getDoc(studentRef);
+
+  if (snap.exists() && snap.data().hasVoted) {
+    status.textContent = "❌ You have already voted";
+    status.className = "error";
+    return;
+  }
+
+  const selectedVotes = {};
+  document.querySelectorAll(".position-card").forEach(card => {
+    const pos = card.querySelector(".position-title").textContent;
+    const checked = card.querySelector(`input[name="${pos}"]:checked`);
+    if (checked) selectedVotes[pos] = checked.value;
+  });
+
+  if (Object.keys(selectedVotes).length === 0) {
+    status.textContent = "❌ Please select at least one candidate";
+    status.className = "error";
+    return;
+  }
+
+  await addDoc(collection(db, "votes"), {
+    admissionNo: student.admissionNo,
+    votes: selectedVotes,
+    timestamp: serverTimestamp()
+  });
+
+  await updateDoc(studentRef, { hasVoted: true });
+
+  status.textContent = "✅ Vote submitted successfully!";
+  status.className = "success";
+
+  // Show Logout Button
+  document.getElementById("logoutBtn").style.display = "block";
+  // Disable Submit button
+  document.getElementById("submitVote").disabled = true;
+};
+
+/* ========== LOGOUT BUTTON ========== */
+document.getElementById("logoutBtn").onclick = () => {
+  localStorage.removeItem("currentStudent");
+  window.location.href = "student.html";
+};
+</script>
+</body>
+</html>

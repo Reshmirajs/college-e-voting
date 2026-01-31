@@ -377,8 +377,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 👨‍💻 Author
 
 **Reshmi Raj**
-- GitHub: [your-github-profile]
-- Email: your-email@college.edu
+**Sruthi S Menon**
+**Nivethitha H D**
 
 ## 🙏 Acknowledgments
 
@@ -394,9 +394,6 @@ For issues, questions, or suggestions:
 - Contact the development team
 - Check Firebase documentation: https://firebase.google.com/docs
 
----
 
-**Last Updated**: January 16, 2026  
-**Version**: 1.0.0
 
-🎉 **Happy Voting!** 🗳️
+
